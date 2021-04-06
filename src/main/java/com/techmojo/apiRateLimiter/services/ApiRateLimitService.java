@@ -1,34 +1,35 @@
 package com.techmojo.apiRateLimiter.services;
 
-import com.techmojo.apiRateLimiter.repository.RateLimitRepository;
+import com.techmojo.apiRateLimiter.models.RequestLog;
+import com.techmojo.apiRateLimiter.repository.IRequestLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service
-public class ApiRateLimitService {
+public class ApiRateLimitService implements IApiRateLimitService {
 
     @Autowired
-    private RateLimitRepository rateLimitRepository;
+    private IRequestLogRepository rateLimitRepository;
 
     @Value("${ratelimitthreshold}")
     private Integer rateLimitThreshold;
 
     public void processApiRequest(String tenantId) throws IllegalAccessException {
         long currentTimeStamp = new Date().getTime();
-        int lastHourApiRequests = getTheLastHourApiRequests(currentTimeStamp);
+        int lastHourApiRequests = getTheLastHourApiRequests(tenantId, currentTimeStamp);
         if (lastHourApiRequests < rateLimitThreshold) {
-            rateLimitRepository.addRequest(tenantId, currentTimeStamp);
+            rateLimitRepository.save(new RequestLog(tenantId, currentTimeStamp));
             return;
         }
         throw new IllegalAccessException("Api rate limit threshold reached try after some time");
     }
 
-    private int getTheLastHourApiRequests(long currentTimeStamp) {
-        return 0;
+    private int getTheLastHourApiRequests(String tenantId, long currentTimeStamp) {
+        long lastHourTimeStamp = currentTimeStamp -  60 * 60 * 1000;
+        return rateLimitRepository.getLastHourRequestCount(tenantId, currentTimeStamp, lastHourTimeStamp);
     }
 
 }
