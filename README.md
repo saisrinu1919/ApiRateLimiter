@@ -15,3 +15,16 @@ Technologies:
         - Database: PostgreSQL
         - Operating System: MacOS
         
+Running Service:
+
+    Steps
+        - clone repository
+            - $git clone https://github.com/saisrinu1919/ApiRateLimiter.git
+        - cd to the repo
+        - Build the repo
+            - $mvn install
+        - Jar is created in target folder. Run the following command to start the server
+            - $ java -jar target/com.techmojo.APIRateLimiter-1.0-SNAPSHOT.jar  
+        - If the server successfull started you can access it 9090 port
+            - http://localhost:9090/api/rateLimit/1 should return success
+       Note: Make sure posgres server is up.
