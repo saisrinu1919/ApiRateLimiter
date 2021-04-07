@@ -13,6 +13,13 @@ public class ApiRateLimitController {
     @Autowired
     private IApiRateLimitService apiRateLimitService;
 
+    /***
+     * Each tenant can access this api for 10 times in a hour,
+     * If any tenant exceeds the threshold limit in a last current  window hour then he should wait for a time
+     * until the current window hour has number of requests less than threshold defined.
+     * @param tenantId -> It is id of tenant
+     * @return String -> returns success or failure
+     */
     @GetMapping("/rateLimit/{tenantId}")
     public String rateLimit(@PathVariable("tenantId") String tenantId) {
         try {

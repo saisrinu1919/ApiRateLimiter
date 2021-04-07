@@ -20,6 +20,11 @@ public class ApiRateLimitImpl implements IApiRateLimitService{
     @Value("${timeDuration}")
     private Integer timeDuration;
 
+    /***
+     * This method checks whether tenant reached maximum threshold limit in last 60 min. if yes it throws exception else it saves the request to DB
+     * @param tenantId
+     * @throws IllegalAccessException
+     */
     public void processApiRequest(String tenantId) throws IllegalAccessException {
         long currentTimeStamp = new Date().getTime();
         int lastHourApiRequests = getTheLastHourApiRequests(tenantId, currentTimeStamp);
@@ -30,6 +35,12 @@ public class ApiRateLimitImpl implements IApiRateLimitService{
         throw new IllegalAccessException();
     }
 
+    /***
+     * This method gives the total number of times the tenant accessed API from current time stamp to last hour time stamp
+     * @param tenantId
+     * @param currentTimeStamp
+     * @return int
+     */
     private int getTheLastHourApiRequests(String tenantId, long currentTimeStamp) {
         long lastHourTimeStamp = currentTimeStamp -  timeDuration;
         return rateLimitRepository.getLastHourRequestCount(tenantId, currentTimeStamp, lastHourTimeStamp);
