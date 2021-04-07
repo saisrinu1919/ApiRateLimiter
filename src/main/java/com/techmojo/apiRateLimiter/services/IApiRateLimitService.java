@@ -1,6 +1,8 @@
 package com.techmojo.apiRateLimiter.services;
 
+import org.springframework.stereotype.Service;
+
 public interface IApiRateLimitService {
-    public void processApiRequest(String tenantId) throws IllegalAccessException;
+    void processApiRequest(String tenantId) throws IllegalAccessException;
 }
 

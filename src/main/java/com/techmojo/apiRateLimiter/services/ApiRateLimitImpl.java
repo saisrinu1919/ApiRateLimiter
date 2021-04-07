@@ -9,13 +9,16 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
-public class ApiRateLimitService implements IApiRateLimitService {
+public class ApiRateLimitImpl implements IApiRateLimitService{
 
     @Autowired
     private IRequestLogRepository rateLimitRepository;
 
     @Value("${ratelimitthreshold}")
     private Integer rateLimitThreshold;
+
+    @Value("${timeDuration}")
+    private Integer timeDuration;
 
     public void processApiRequest(String tenantId) throws IllegalAccessException {
         long currentTimeStamp = new Date().getTime();
@@ -24,12 +27,11 @@ public class ApiRateLimitService implements IApiRateLimitService {
             rateLimitRepository.save(new RequestLog(tenantId, currentTimeStamp));
             return;
         }
-        throw new IllegalAccessException("Api rate limit threshold reached try after some time");
+        throw new IllegalAccessException();
     }
 
     private int getTheLastHourApiRequests(String tenantId, long currentTimeStamp) {
-        long lastHourTimeStamp = currentTimeStamp -  60 * 60 * 1000;
+        long lastHourTimeStamp = currentTimeStamp -  timeDuration;
         return rateLimitRepository.getLastHourRequestCount(tenantId, currentTimeStamp, lastHourTimeStamp);
     }
-
 }
